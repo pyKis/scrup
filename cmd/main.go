@@ -1,15 +1,20 @@
 package main
 
 import (
-p "scrup/pkg/parser"
+
+	//p "scrup/pkg/parser"
+
+	db "scrup/db"
 )
 
 
 
-	
+
 
 
 func main() {
-	p.ParsBiggeek()
+	
+	db.ConnectToDB()
+	//p.ParsBiggeek()
 	
 }
