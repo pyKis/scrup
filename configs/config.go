@@ -19,9 +19,10 @@ func ParamDb() string{
 	user := os.Getenv("dbuser")
 	password := os.Getenv("dbpassword")
 	name := os.Getenv("dbname")
+	sslmode := os.Getenv("sslmode")
 
 
-param:= "host=" + host + " port=" + port + " user=" + user + " password=" + password + " dbname=" + name + " sslmode=disable"
+param:= "host=" + host + " port=" + port + " user=" + user + " password=" + password + " dbname=" + name + " sslmode=" + sslmode
 
 return param
 }
