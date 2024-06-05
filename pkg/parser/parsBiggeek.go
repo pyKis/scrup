@@ -55,7 +55,6 @@ func ParsBiggeek() {
 
 
 		//discont := ((oldPrice - price)/oldPrice)*100
-
 		
 
 		
