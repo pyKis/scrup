@@ -1,19 +1,24 @@
 package parsBiggeek
 
 import (
+	"database/sql"
 	"fmt"
+	"log"
+
+	"scrup/db"
+	"scrup/models"
 	"strings"
 
 	"github.com/gocolly/colly/v2"
 )
 
 
-func ParsBiggeek() {
+func ParsBiggeek(database *sql.DB) {
 	c :=colly.NewCollector(
 		colly.AllowedDomains("biggeek.ru"),
 		colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"),
 	)
-/*
+
 	c.OnHTML("div.prod-pagination", func(e *colly.HTMLElement) {
 
 		page:= e.ChildAttrs("a.prod-pagination__item","href")
@@ -24,9 +29,12 @@ func ParsBiggeek() {
 		}
 		
 	})
-*/
-	c.OnHTML("div.catalog-card", func(e *colly.HTMLElement) {
-		name := e.ChildAttrs("img","alt")
+
+
+var items []models.Item
+    
+	c.OnHTML("div.catalog-card", func(e *colly.HTMLElement)  {
+		name := e.ChildAttr("img","alt")
 
 		linc := e.ChildAttr("a","href")
 		if linc != "" {
@@ -52,22 +60,36 @@ func ParsBiggeek() {
 			}
 
 		}
-
-
-		//discont := ((oldPrice - price)/oldPrice)*100
+		item := models.Item{
+			Name: name,
+			Linc: linc,
+			Price: price,
+			OldPrice: oldPrice,
+			
+		}
+			items = append(items, item)
+			
+		//discont := ((oldPrice - price) / oldPrice) * 100
+		err := db.InsertItemBiggeek(database, item)
+		if err != nil {
+			log.Printf("Ошибка вставки элемента: %v\n", err)
+		}
 		
-
+			
+        
 		
-		
-		fmt.Printf("Наименование: %s\nСсылка: %s\nЦена: %s руб\nСтарая цена: %s\n\n",name,linc,price,oldPrice)
-		
-	})
-
 	
+	})
+	
+
+	c.OnScraped(func(r *colly.Response) {
+		log.Println("Парсинг завершен")
+	})
 	
 	
 	c.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
+		
 	})
 	
 	c.Visit("https://biggeek.ru/sale")
