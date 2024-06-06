@@ -1,10 +1,10 @@
 package main
 
 import (
+	"log"
+	p "scrup/pkg/parser"
 
-	//p "scrup/pkg/parser"
-
-	db "scrup/db"
+	"scrup/db"
 )
 
 
@@ -13,8 +13,14 @@ import (
 
 
 func main() {
+	database,err :=db.ConnectToDB()
+	if err != nil {
+        log.Fatalf("Ошибка подключения к базе данных: %v\n", err)
+    }
+    defer 	database.Close()
+
+
+	p.ParsBiggeek(database)
 	
-	db.ConnectToDB()
-	//p.ParsBiggeek()
 	
 }
